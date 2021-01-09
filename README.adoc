@@ -1,0 +1,29 @@
+= IBM MQ Badge developer challenge
+
+Mavenized and dockerized the https://developer.ibm.com/tutorials/mq-badge-mq-dev-challenge[IBM MQ Badge developer challenge] https://github.com/ibm-messaging/mq-dev-badge-sample[sources] from the https://ibm.biz/mq-badge[IBM Developer Essentials course]. This project contains also the required code updates from the challenge in order to make the ticket reseller application work.
+
+== Running the application using Docker Compose
+
+To build the services, run `docker-compose build` in the repository's root directory. Once the services are built, you can start the whole application using `docker-compose up`.
+
+The docker-compose contains the following services:
+
+|===
+|Service |Description
+
+|Event booking service
+|When tickets become available for sale, the service generates a reseller message to notify its subscribers
+
+|Reseller application
+|Subscribes to the `newTickets` topic. On receiving a publication, puts the request message to a purchase (request) queue
+|===
+
+== Running single services using Docker
+
+You can run the services in a Docker environment using the scripts provided in the respective service directory.
+
+To build and run the services, run the following commands:
+
+* `./ticket-generator/build.sh && ./ticket-generator/run.sh`
+* `./ticket-reseller/build.sh && ./ticket-reseller/run.sh`
+

@@ -1,0 +1,34 @@
+version: '3'
+services:
+  ticket-generator:
+    build:
+      context: ./
+      dockerfile: ./ticket-generator/Dockerfile
+    ports:
+      - "1414:1414"
+      - "9443:9443"
+    environment:
+      LICENSE: accept
+      MQ_QMGR_NAME: QM1
+      LOG_FORMAT: json
+      MQ_APP_PASSWORD: ${MQ_APP_PASSWORD}
+  ticket-reseller:
+    build:
+      context: ./
+      dockerfile: ./ticket-reseller/Dockerfile
+    environment:
+      MQ_BADGE_QM_HOSTNAME: ticket-generator
+    command:
+      [
+          "/root/scripts/wait-for-it.sh",
+          "--timeout=30",
+          "ticket-generator:1414",
+          "--",
+          "java",
+          "-jar",
+          "/app/ticket-reseller.jar",
+      ]
+    volumes:
+      - ./scripts:/root/scripts
+    depends_on:
+      - ticket-generator
